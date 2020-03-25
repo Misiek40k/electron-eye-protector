@@ -2,8 +2,14 @@ import React from 'react';
 import { render } from 'react-dom';
 
 class App extends React.Component {
+  baseTime = 1200;
+  baseInterval = 1000;
+  statusOff = 'off';
+  statusRest = 'rest';
+  statusWork = 'work';
+
   state = {
-    status: 'off',
+    status: this.statusOff,
     time: 150,
     timer: null,
   }
@@ -22,15 +28,16 @@ class App extends React.Component {
 
     if (this.state.time === 0) {
       this.playBell();
-      if (this.state.status === 'work') {
+
+      if (this.state.status === this.statusWork) {
         this.setState({
-          status: 'rest',
+          status: this.statusRest,
           time: 20,
         });
-      } else if (this.state.status === 'rest') {
+      } else if (this.state.status === this.statusRest) {
         this.setState({
-          status: 'work',
-          time: 1200,
+          status: this.statusWork,
+          time: this.baseTime,
         });
       }
     }
@@ -38,16 +45,16 @@ class App extends React.Component {
 
   startTimer = () => {
     this.setState({
-      status: 'work',
-      time: 1200,
-      timer: setInterval(this.step, 1000),
+      status: this.statusWork,
+      time: this.baseTime,
+      timer: setInterval(this.step, this.baseInterval),
     });
   };
 
   stopTimer = () => {
     clearInterval(this.state.timer);
     this.setState({
-      status: 'off',
+      status: this.statusOff,
       time: 0,
     });
   };
@@ -69,21 +76,21 @@ class App extends React.Component {
       <div>
         <h1>Protect your eyes</h1>
 
-        {status === 'off' &&
+        {status === this.statusOff &&
           <div className="description">
             <p>According to optometrists in order to save your eyes, you should follow the 20/20/20. It means you should to rest your eyes every 20 minutes for 20 seconds by looking more than 20 feet away.</p>
             <p>This app will help you track your time and inform you when it's time to rest.</p>
           </div>}
 
-        {status === 'work' && <img src="./images/work.png" />}
+        {status === this.statusWork && <img src="./images/work.png" />}
 
-        {status === 'rest' && <img src="./images/rest.png" />}
+        {status === this.statusRest && <img src="./images/rest.png" />}
 
-        {status !== 'off' && <div className="timer">{this.formatTime(time)}</div>}
+        {status !== this.statusOff && <div className="timer">{this.formatTime(time)}</div>}
 
-        {status === 'off' && <button className="btn" onClick={() => this.startTimer()}>Start</button>}
+        {status === this.statusOff && <button className="btn" onClick={() => this.startTimer()}>Start</button>}
 
-        {status !== 'off' && <button className="btn" onClick={() => this.stopTimer()}>Stop</button>}
+        {status !== this.statusOff && <button className="btn" onClick={() => this.stopTimer()}>Stop</button>}
 
         <button className="btn btn-close" onClick={() => this.closeApp()}>X</button>
       </div>
